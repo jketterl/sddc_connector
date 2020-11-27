@@ -147,7 +147,7 @@ uint32_t Ddc::run(int16_t* input_samples, float* host_output, uint32_t length) {
     cudaError_t error = cudaGetLastError();
     if (error != cudaSuccess) {
         std::cerr << "CUDA ERROR: " << cudaGetErrorString(error) << "\n";
-        exit(-1);
+        //exit(-1);
     }
 
     return out_samples;
