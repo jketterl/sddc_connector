@@ -42,7 +42,7 @@ Ddc::Ddc(uint32_t new_buffersize) {
     cudaMemcpy(decimation_device, &decimation, sizeof(uint16_t), cudaMemcpyHostToDevice);
 
     cudaMalloc((void**)&decimation_offset_device, sizeof(uint16_t));
-    cudaMemcpy(decimation_offset_device, &decimation, sizeof(uint16_t), cudaMemcpyHostToDevice);
+    cudaMemcpy(decimation_offset_device, &decimation_offset, sizeof(uint16_t), cudaMemcpyHostToDevice);
 
     cudaMalloc((void**)&phase_offset_device, sizeof(double));
     cudaMemcpy(phase_offset_device, &phase_offset, sizeof(double), cudaMemcpyHostToDevice);
@@ -64,6 +64,9 @@ void Ddc::set_frequency_offset(float new_frequency_offset) {
 void Ddc::set_decimation(uint16_t new_decimation) {
     decimation = new_decimation;
     cudaMemcpy(decimation_device, &decimation, sizeof(uint16_t), cudaMemcpyHostToDevice);
+
+    decimation_offset = 0;
+    cudaMemcpy(decimation_offset_device, &decimation_offset, sizeof(uint16_t), cudaMemcpyHostToDevice);
     reconfigure();
 }
 
