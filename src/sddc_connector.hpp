@@ -1,9 +1,19 @@
 #pragma once
 
+#include "sdr_cuda.hpp"
 #include <owrx/connector.hpp>
 #include <owrx/gainspec.hpp>
+extern "C" {
+#define this extern_this
+#include <libsddc.h>
+#undef this
+}
+
+#define RX888_HF_SAMPLERATE 128e6
 
 class SddcConnector: public Owrx::Connector {
+    public:
+        void read_callback(uint32_t data_size, uint8_t* data);
     protected:
         virtual uint32_t get_buffer_size() override;
         virtual int open() override;
@@ -13,4 +23,12 @@ class SddcConnector: public Owrx::Connector {
         virtual int set_sample_rate(double sample_rate) override;
         virtual int set_gain(Owrx::GainSpec* gain) override;
         virtual int set_ppm(int ppm) override;
+    private:
+        sddc_t* dev;
+
+        // must be divisible by 512 for CUDA
+        uint32_t frame_size = 512*256;
+        float* conversion_buffer;
+        const char* imagefile = nullptr;;
+        SdrCuda::Ddc* ddc;
 };
