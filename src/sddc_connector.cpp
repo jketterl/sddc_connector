@@ -54,7 +54,7 @@ static void read_callback(uint32_t data_size, uint8_t *data, void *context)
 void SddcConnector::read_callback(uint32_t data_size, uint8_t* data) {
     if (!run)
           return;
-    uint32_t samples = ddc->run((int16_t*) data, conversion_buffer, samples);
+    uint32_t samples = ddc->run((int16_t*) data, conversion_buffer, data_size / 2);
     processSamples(conversion_buffer, samples * 2);
 }
 
@@ -87,7 +87,7 @@ int SddcConnector::read() {
 int SddcConnector::close() {
     SdrCuda::Ddc::free_output(conversion_buffer);
     conversion_buffer = nullptr;
-    ddc = nullptr;
+    delete ddc;
     sddc_close(dev);
     dev = nullptr;
     return 0;

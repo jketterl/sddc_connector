@@ -63,6 +63,7 @@ void Ddc::set_frequency_offset(float new_frequency_offset) {
 
 void Ddc::set_decimation(uint16_t new_decimation) {
     decimation = new_decimation;
+    cudaMemcpy(decimation_device, &decimation, sizeof(uint16_t), cudaMemcpyHostToDevice);
     reconfigure();
 }
 
