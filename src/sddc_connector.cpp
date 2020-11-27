@@ -114,5 +114,5 @@ int SddcConnector::set_gain(Owrx::GainSpec* gain) {
 }
 
 int SddcConnector::set_ppm(int ppm) {
-    return 0;
+    return sddc_set_frequency_correction(dev, ppm);
 }
