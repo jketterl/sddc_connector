@@ -49,7 +49,7 @@ Ddc::Ddc(uint32_t new_buffersize) {
 
     cudaMalloc((void**)&angle_per_sample_device, sizeof(double));
 
-    cudaMalloc((void**)&raw, sizeof(int16_t) * buffersize);
+    cudaMalloc((void**)&raw, sizeof(int16_t) * buffersize * 10);
     cudaMalloc((void**)&input, sizeof(float) * 2 * (buffersize + taps_length));
     cudaMalloc((void**)&output, sizeof(float) * buffersize);
 
@@ -117,12 +117,17 @@ float* Ddc::get_fir_decimate_input() {
 }
 
 uint32_t Ddc::run(int16_t* input_samples, float* host_output, uint32_t length) {
-    cudaMemcpy(raw, input_samples, sizeof(int16_t) * length, cudaMemcpyHostToDevice);
+    if (raw_offset + length > buffersize * 10) {
+        raw_offset = 0;
+    }
+    int16_t* raw_input_pointer = raw + raw_offset;
+    raw_offset += length;
+    cudaMemcpy(raw_input_pointer, input_samples, sizeof(int16_t) * length, cudaMemcpyHostToDevice);
 
     int blocks = length / 1024;
     // run an extra block if memory does not line up ideally
     if (blocks % 1024 > 0) blocks += 1;
-    convert_ui16_c_kernel<<<blocks, 1024>>>(raw, get_fir_decimate_input(), phase_offset_device, angle_per_sample_device);
+    convert_ui16_c_kernel<<<blocks, 1024>>>(raw_input_pointer, get_fir_decimate_input(), phase_offset_device, angle_per_sample_device);
 
     // move the phase forward
     phase_offset += angle_per_sample * length;

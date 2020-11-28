@@ -20,6 +20,7 @@ class Ddc {
         float* input;
         float* output;
         uint32_t buffersize;
+        uint32_t raw_offset;
         float* taps = nullptr;
         uint16_t taps_length;
         uint16_t decimation = 2;
