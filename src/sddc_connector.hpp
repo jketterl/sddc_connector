@@ -10,6 +10,8 @@ extern "C" {
 }
 
 #define RX888_HF_SAMPLERATE 128e6
+#define RX888_VHF_SAMPLERATE 20e6
+#define TUNER_IF -5e6
 
 class SddcConnector: public Owrx::Connector {
     public:
@@ -31,4 +33,6 @@ class SddcConnector: public Owrx::Connector {
         float* conversion_buffer;
         const char* imagefile = nullptr;;
         SdrCuda::Ddc* ddc;
+
+        double adc_sample_rate = RX888_HF_SAMPLERATE;
 };
