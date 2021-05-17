@@ -18,6 +18,7 @@ class SddcConnector: public Owrx::Connector {
         void read_callback(uint32_t data_size, uint8_t* data);
     protected:
         virtual uint32_t get_buffer_size() override;
+        virtual void print_version() override;
         virtual int open() override;
         virtual int read() override;
         virtual int close() override;

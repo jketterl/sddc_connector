@@ -8,6 +8,11 @@ int main (int argc, char** argv) {
     return connector->main(argc, argv);
 }
 
+void SddcConnector::print_version() {
+    std::cout << "sddc_connector version " << VERSION << "\n";
+    Connector::print_version();
+}
+
 uint32_t SddcConnector::get_buffer_size() {
     return frame_size;
 }
