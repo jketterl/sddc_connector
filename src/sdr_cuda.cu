@@ -76,7 +76,7 @@ void Ddc::reconfigure() {
     // maximum number of taps currently limited by maximum number of cuda threads
     if (taps_length > 511) taps_length = 511;
     taps_length = max(taps_length, 121);
-    std::cerr << "taps length: " << taps_length << "\n";
+    std::cout << "taps length: " << taps_length << std::endl;
 
     float* new_taps = (float*) malloc(sizeof(float) * taps_length);
     firdes_lowpass_f(new_taps, taps_length, 0.485/decimation, WINDOW_HAMMING);
@@ -151,7 +151,7 @@ uint32_t Ddc::run(int16_t* input_samples, float* host_output, uint32_t length) {
     cudaDeviceSynchronize();
     cudaError_t error = cudaGetLastError();
     if (error != cudaSuccess) {
-        std::cerr << "CUDA ERROR: " << cudaGetErrorString(error) << "\n";
+        std::cerr << "CUDA ERROR: " << cudaGetErrorString(error) << std::endl;
         //exit(-1);
     }
 

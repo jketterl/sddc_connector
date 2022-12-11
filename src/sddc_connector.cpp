@@ -9,7 +9,7 @@ int main (int argc, char** argv) {
 }
 
 void SddcConnector::print_version() {
-    std::cout << "sddc_connector version " << VERSION << "\n";
+    std::cout << "sddc_connector version " << VERSION << std::endl;
     Connector::print_version();
 }
 
@@ -27,7 +27,7 @@ int SddcConnector::open() {
         std::ifstream ifile;
         ifile.open("/lib/firmware/SDDC_FX3.img");
         if (not ifile) {
-            std::cerr << "ERROR: no usable FX3 firmware\n";
+            std::cerr << "ERROR: no usable FX3 firmware" << std::endl;
             return 1;
         }
         imagefile = (const char*) "/lib/firmware/SDDC_FX3.img";
@@ -35,12 +35,12 @@ int SddcConnector::open() {
 
     dev = sddc_open(index, imagefile);
     if (dev == 0) {
-        std::cerr << "ERROR: could not open device\n";
+        std::cerr << "ERROR: could not open device" << std::endl;
         return 1;
     }
 
     if (sddc_set_sample_rate(dev, adc_sample_rate) < 0) {
-        std::cerr << "ERROR - sddc_set_sample_rate() failed\n";
+        std::cerr << "ERROR - sddc_set_sample_rate() failed" << std::endl;
         return 2;
     }
 
@@ -64,24 +64,24 @@ void SddcConnector::read_callback(uint32_t data_size, uint8_t* data) {
 
 int SddcConnector::read() {
     if (sddc_set_async_params(dev, frame_size, 0, ::read_callback, this) < 0) {
-        fprintf(stderr, "ERROR - sddc_set_async_params() failed\n");
+        std::cerr << "ERROR - sddc_set_async_params() failed" << std::endl;
         return -1;
     }
 
     if (sddc_start_streaming(dev) < 0) {
-        std::cerr << "ERROR - sddc_start_streaming() failed\n";
+        std::cerr << "ERROR - sddc_start_streaming() failed" << std::endl;
         return -1;
     }
 
-    std::cerr << "started streaming...\n";
+    std::cout << "started streaming..." << std::endl;
 
     /* todo: move this into a thread */
     while (run)
         sddc_handle_events(dev);
 
-    std::cerr << "finished. now stop streaming ..\n";
+    std::cout << "finished. now stop streaming..." << std::endl;
     if (sddc_stop_streaming(dev) < 0) {
-        std::cerr << "ERROR - sddc_stop_streaming() failed\n";
+        std::cerr << "ERROR - sddc_stop_streaming() failed" << std::endl;
         return -1;
     }
 
@@ -102,17 +102,17 @@ int SddcConnector::set_center_frequency(double frequency) {
         adc_sample_rate = RX888_VHF_SAMPLERATE;
 
         if (sddc_set_rf_mode(dev, VHF_MODE) != 0) {
-            std::cerr << "ERROR - sddc_set_rf_mode() failed\n";
+            std::cerr << "ERROR - sddc_set_rf_mode() failed" << std::endl;
             return -1;
         }
 
         if (sddc_set_tuner_frequency(dev, frequency) != 0) {
-            std::cerr << "ERROR - sddc_set_tuner_frequency() failed\n";
+            std::cerr << "ERROR - sddc_set_tuner_frequency() failed" << std::endl;
             return -1;
         }
 
         if (sddc_set_sample_rate(dev, adc_sample_rate) != 0) {
-            std::cerr << "ERROR - sddc_set_sample_rate() failed\n";
+            std::cerr << "ERROR - sddc_set_sample_rate() failed" << std::endl;
             return -1;
         }
 
@@ -121,17 +121,17 @@ int SddcConnector::set_center_frequency(double frequency) {
         adc_sample_rate = RX888_HF_SAMPLERATE;
 
         if (sddc_set_rf_mode(dev, HF_MODE) != 0) {
-            std::cerr << "ERROR - sddc_set_rf_mode() failed\n";
+            std::cerr << "ERROR - sddc_set_rf_mode() failed" << std::endl;
             return -1;
         }
 
         if (sddc_set_sample_rate(dev, adc_sample_rate) != 0) {
-            std::cerr << "ERROR - sddc_set_sample_rate() failed\n";
+            std::cerr << "ERROR - sddc_set_sample_rate() failed" << std::endl;
             return -1;
         }
 
         if (sddc_set_tuner_attenuation(dev, 0) != 0) {
-            std::cerr << "ERROR - sddc_set_tuner_attenuation() failed\n";
+            std::cerr << "ERROR - sddc_set_tuner_attenuation() failed" << std::endl;
             return -1;
         }
 
@@ -163,7 +163,7 @@ int SddcConnector::set_gain(Owrx::GainSpec* new_gain) {
         }
     }
 
-    std::cerr << "unsupported gain settings\n";
+    std::cerr << "unsupported gain settings" << std::endl;
     return 100;
 }
 
