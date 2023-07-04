@@ -1,7 +1,4 @@
 #include <stdint.h>
-extern "C"{
-#include <libcsdr.h>
-}
 
 namespace SdrCuda {
 

@@ -1,8 +1,11 @@
 #include "sdr_cuda.hpp"
 #include <cuda_fp16.h>
 #include <iostream>
+#include <csdr/fir.hpp>
+#include <csdr/window.hpp>
 
 using namespace SdrCuda;
+using namespace Csdr;
 
 __global__ void convert_ui16_c_kernel(int16_t* input, float* output, double* phase_offset, double* angle_per_sample) {
     uint32_t i = blockDim.x * blockIdx.x + threadIdx.x;
@@ -78,8 +81,9 @@ void Ddc::reconfigure() {
     taps_length = max(taps_length, 121);
     std::cout << "taps length: " << taps_length << std::endl;
 
-    float* new_taps = (float*) malloc(sizeof(float) * taps_length);
-    firdes_lowpass_f(new_taps, taps_length, 0.485/decimation, WINDOW_HAMMING);
+    auto tapgen = new Csdr::LowPassTapGenerator(0.485/decimation, new HammingWindow());
+    float* new_taps = tapgen->generateTaps(taps_length);
+    delete tapgen;
 
     if (taps != nullptr) cudaFree(taps);
     cudaMalloc((void**)&taps, sizeof(float) * taps_length);
