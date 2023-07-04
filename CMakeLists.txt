@@ -14,10 +14,9 @@ if(NOT CMAKE_BUILD_TYPE)
     message(STATUS "Build type not specified: defaulting to release.")
 endif()
 
-include(FindPkgConfig)
 include(GNUInstallDirs)
 
-pkg_check_modules(OWRX_CONNECTOR REQUIRED owrx-connector)
-pkg_check_modules(LIBCSDR REQUIRED csdr)
+find_package(OwrxConnector 0.7 REQUIRED)
+find_package(Csdr 0.19 REQUIRED)
 
 add_subdirectory(src)
